@@ -1,9 +1,12 @@
-FROM nikolaik/python-nodejs:python3.10-nodejs16-alpine as dev_base
+FROM node:16-alpine3.18 as dev_base
 RUN apk --update --no-cache add curl
 ENV NX_DAEMON=false
 
 ARG BULL_MQ_PRO_TOKEN
 ENV BULL_MQ_PRO_NPM_TOKEN=$BULL_MQ_PRO_TOKEN
+
+ENV PNPM_HOME="/pnpm"
+ENV PATH="$PNPM_HOME:$PATH"
 
 RUN npm i pm2 -g
 RUN npm --no-update-notifier --no-fund --global install pnpm@8.9.0
@@ -19,19 +22,17 @@ COPY ./meta .
 COPY ./deps .
 COPY ./pkg .
 
-RUN if [ -n '${BULL_MQ_PRO_NPM_TOKEN}' ] ; then echo 'Building with Enterprise Edition of Novu' ; fi
-RUN if [ -n '${BULL_MQ_PRO_NPM_TOKEN}' ]; then rm -f .npmrc ; fi
-RUN if [ -n '${BULL_MQ_PRO_NPM_TOKEN}' ]; then cp .npmrc-cloud .npmrc  ; fi
+RUN if [ -n '${BULL_MQ_PRO_NPM_TOKEN}' ] ; then echo 'Building with Enterprise Edition of Novu'; rm -f .npmrc ; cp .npmrc-cloud .npmrc ; fi
 
-RUN --mount=type=cache,id=pnpm-store-worker,target=/root/.pnpm-store\
+RUN --mount=type=cache,id=pnpm-store-worker,target=/pnpm/store\
  pnpm install --filter "novuhq" --filter "{${PACKAGE_PATH}}..."\
  --frozen-lockfile\
  --unsafe-perm\
  --reporter=silent
 
-RUN NODE_ENV=production NX_DAEMON=false pnpm build:worker
+RUN NODE_ENV=production NX_DAEMON=false pnpm build
 
-WORKDIR /usr/src/app/apps/worker
+WORKDIR /usr/src/app/${PACKAGE_PATH}
 
 RUN cp src/.example.env dist/src/.env
 RUN cp src/.env.test dist/src/.env.test
@@ -48,6 +49,14 @@ WORKDIR /usr/src/app
 # Remove all dependencies so later we can only install prod dependencies without devDependencies
 RUN rm -rf node_modules && pnpm recursive exec -- rm -rf ./src ./node_modules
 
+RUN --mount=type=cache,id=pnpm-store-worker,target=/pnpm/store\
+ pnpm install --prod --filter "{${PACKAGE_PATH}}..." \
+ --frozen-lockfile \
+ --unsafe-perm \
+ --no-optional \
+ --ignore-scripts \
+ --reporter=silent
+
 # ------- PRODUCTION BUILD ----------
 FROM dev_base AS prod
 ARG PACKAGE_PATH
@@ -56,18 +65,12 @@ ENV CI=true
 
 WORKDIR /usr/src/app
 
-COPY ./meta .
+COPY --link ./meta .
 
 # Get the build artifacts that only include dist folders
-COPY --from=assets /usr/src/app .
-
-RUN --mount=type=cache,id=pnpm-store-worker,target=/root/.pnpm-store\
- pnpm install --filter "{${PACKAGE_PATH}}..." \
- --frozen-lockfile \
- --unsafe-perm \
- --reporter=silent
+COPY --link --from=assets /usr/src/app .
 
 ENV NEW_RELIC_NO_CONFIG_FILE=true
 
-WORKDIR /usr/src/app/apps/worker
+WORKDIR /usr/src/app/${PACKAGE_PATH}
 CMD [ "pm2-runtime","start", "dist/main.js" ]
