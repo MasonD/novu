@@ -197,12 +197,23 @@ async function parseCli({ input, flags }) {
  * @param {function(string):Promise<void>} callable
  */
 async function withTmpdir(callable) {
+  const cleanup = () => tmpdir && fs.rm(tmpdir, { recursive: true })
+  async function handler() {
+    await cleanup();
+    process.exit(0);
+  }
+  process.on('SIGINT', handler);
+  process.on('SIGTERM', handler);
+
   const tmpdir = await fs.mkdtemp(join(os.tmpdir(), SCRIPT_PATH));
   let result;
   try {
     result = await callable(tmpdir);
   } finally {
-    await fs.rm(tmpdir, { recursive: true });
+    process.off('SIGINT', handler);
+    process.off('SIGTERM', handler);
+
+    await cleanup();
   }
 
   return result;
