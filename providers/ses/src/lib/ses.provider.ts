@@ -20,10 +20,10 @@ export class SESEmailProvider implements IEmailProvider {
   constructor(private readonly config: SESConfig) {
     this.ses = new SESClient({
       region: this.config.region,
-      credentials: {
+      credentials: this.config.accessKeyId ? {
         accessKeyId: this.config.accessKeyId,
         secretAccessKey: this.config.secretAccessKey,
-      },
+      } : undefined,
     });
   }
 

@@ -74,8 +74,8 @@ if (process.env.STORAGE_SERVICE === 'AWS' || !process.env.STORAGE_SERVICE) {
   });
   validators.S3_BUCKET_NAME = str();
   validators.S3_REGION = str();
-  validators.AWS_ACCESS_KEY_ID = str();
-  validators.AWS_SECRET_ACCESS_KEY = str();
+  validators.AWS_ACCESS_KEY_ID = str({ default: undefined });
+  validators.AWS_SECRET_ACCESS_KEY = str({ default: undefined });
 }
 
 if (process.env.NODE_ENV !== 'local' && process.env.NODE_ENV !== 'test') {
