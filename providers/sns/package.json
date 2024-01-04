@@ -33,7 +33,7 @@
   },
   "dependencies": {
     "@aws-sdk/client-sns": "^3.382.0",
-    "@novu/stateless": "^0.22.0"
+    "@novu/stateless": "workspace:^0.22.0"
   },
   "devDependencies": {
     "@istanbuljs/nyc-config-typescript": "^1.0.1",

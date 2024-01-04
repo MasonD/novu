@@ -28,8 +28,8 @@
     "node": ">=10"
   },
   "dependencies": {
-    "@novu/client": "^0.22.0",
-    "@novu/shared": "^0.22.0",
+    "@novu/client": "workspace:^0.22.0",
+    "@novu/shared": "workspace:^0.22.0",
     "@tanstack/query-core": "^4.15.1",
     "socket.io-client": "4.7.2"
   },

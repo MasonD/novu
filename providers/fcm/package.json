@@ -32,7 +32,7 @@
     "node": ">=10"
   },
   "dependencies": {
-    "@novu/stateless": "^0.22.0",
+    "@novu/stateless": "workspace:^0.22.0",
     "firebase-admin": "^11.10.1"
   },
   "devDependencies": {

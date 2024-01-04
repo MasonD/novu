@@ -44,7 +44,7 @@
     "access": "public"
   },
   "dependencies": {
-    "@novu/stateless": "^0.22.0",
+    "@novu/stateless": "workspace:^0.22.0",
     "twilio": "^4.19.3"
   },
   "devDependencies": {

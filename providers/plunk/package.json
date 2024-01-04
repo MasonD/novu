@@ -29,7 +29,7 @@
     "access": "public"
   },
   "dependencies": {
-    "@novu/stateless": "^0.22.0",
+    "@novu/stateless": "workspace:^0.22.0",
     "@plunk/node": "2.0.0"
   },
   "devDependencies": {

@@ -32,7 +32,7 @@
     "node": ">=10"
   },
   "dependencies": {
-    "@novu/stateless": "^0.22.0",
+    "@novu/stateless": "workspace:^0.22.0",
     "telnyx": "^1.23.0"
   },
   "devDependencies": {

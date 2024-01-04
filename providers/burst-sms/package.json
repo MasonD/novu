@@ -38,7 +38,7 @@
   },
   "dependencies": {
     "axios": "^1.6.2",
-    "@novu/stateless": "^0.22.0",
+    "@novu/stateless": "workspace:^0.22.0",
     "qs": "^6.11.0"
   },
   "devDependencies": {

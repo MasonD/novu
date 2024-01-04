@@ -45,7 +45,7 @@
     "node": ">=10"
   },
   "dependencies": {
-    "@novu/stateless": "^0.22.0",
+    "@novu/stateless": "workspace:^0.22.0",
     "@sendgrid/mail": "^8.1.0"
   },
   "devDependencies": {

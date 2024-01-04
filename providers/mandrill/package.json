@@ -42,7 +42,7 @@
   },
   "dependencies": {
     "@mailchimp/mailchimp_transactional": "^1.0.50",
-    "@novu/stateless": "^0.22.0"
+    "@novu/stateless": "workspace:^0.22.0"
   },
   "devDependencies": {
     "@istanbuljs/nyc-config-typescript": "1.0.2",

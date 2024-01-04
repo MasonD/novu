@@ -30,6 +30,7 @@
     "admin:remove-organization": "cross-env NODE_ENV=local MIGRATION=true ts-node --transpileOnly ./admin/remove-organization.ts"
   },
   "dependencies": {
+    "@faker-js/faker": "^6.0.0",
     "@godaddy/terminus": "^4.12.1",
     "@google-cloud/storage": "^6.2.3",
     "@nestjs/axios": "~2.0.0",
@@ -41,12 +42,12 @@
     "@nestjs/swagger": "^7.1.8",
     "@nestjs/terminus": "^10.0.1",
     "@nestjs/throttler": "^5.0.1",
-    "@novu/application-generic": "^0.22.0",
-    "@novu/dal": "^0.22.0",
-    "@novu/node": "^0.22.0",
-    "@novu/shared": "^0.22.0",
-    "@novu/stateless": "^0.22.0",
-    "@novu/testing": "^0.22.0",
+    "@novu/application-generic": "workspace:^0.22.0",
+    "@novu/dal": "workspace:^0.22.0",
+    "@novu/node": "workspace:^0.22.0",
+    "@novu/shared": "workspace:^0.22.0",
+    "@novu/stateless": "workspace:^0.22.0",
+    "@novu/testing": "workspace:^0.22.0",
     "@sendgrid/mail": "^8.1.0",
     "@sentry/hub": "^7.40.0",
     "@sentry/node": "^7.40.0",
@@ -92,7 +93,6 @@
     "i18next": "^23.7.6"
   },
   "devDependencies": {
-    "@faker-js/faker": "^6.0.0",
     "@nestjs/cli": "^10.1.16",
     "@nestjs/schematics": "^10.0.2",
     "@nestjs/testing": "^10.2.2",

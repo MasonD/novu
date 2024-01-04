@@ -32,7 +32,7 @@
     "node": ">=10"
   },
   "dependencies": {
-    "@novu/stateless": "^0.22.0",
+    "@novu/stateless": "workspace:^0.22.0",
     "@vonage/auth": "^1.7.0",
     "@vonage/server-sdk": "^3.10.0"
   },

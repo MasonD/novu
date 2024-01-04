@@ -36,7 +36,7 @@
     "node": ">=10"
   },
   "dependencies": {
-    "@novu/stateless": "^0.22.0",
+    "@novu/stateless": "workspace:^0.22.0",
     "@parse/node-apn": "^5.2.3"
   },
   "devDependencies": {
