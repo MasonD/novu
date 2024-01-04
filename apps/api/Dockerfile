@@ -54,7 +54,6 @@ RUN --mount=type=cache,id=pnpm-store-worker,target=/pnpm/store\
  --frozen-lockfile \
  --unsafe-perm \
  --no-optional \
- --ignore-scripts \
  --reporter=silent
 
 # ------- PRODUCTION BUILD ----------
