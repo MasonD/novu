@@ -22,7 +22,7 @@ COPY ./meta .
 COPY ./deps .
 COPY ./pkg .
 
-RUN if [ -n '${BULL_MQ_PRO_NPM_TOKEN}' ] ; then echo 'Building with Enterprise Edition of Novu'; rm -f .npmrc ; cp .npmrc-cloud .npmrc ; fi
+RUN if [ -n "${BULL_MQ_PRO_NPM_TOKEN}" ] ; then echo 'Building with Enterprise Edition of Novu'; rm -f .npmrc ; cp .npmrc-cloud .npmrc ; fi
 
 RUN --mount=type=cache,id=pnpm-store-worker,target=/pnpm/store\
  pnpm install --filter "novuhq" --filter "{${PACKAGE_PATH}}..."\
