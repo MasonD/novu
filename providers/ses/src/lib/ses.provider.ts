@@ -12,6 +12,8 @@ import { SESClient, SendRawEmailCommand } from '@aws-sdk/client-ses';
 import { SESConfig } from './ses.config';
 import nodemailer from 'nodemailer';
 
+const EMPTY_FLAG = "none";
+
 export class SESEmailProvider implements IEmailProvider {
   id = 'ses';
   channelType = ChannelTypeEnum.EMAIL as ChannelTypeEnum.EMAIL;
@@ -20,7 +22,7 @@ export class SESEmailProvider implements IEmailProvider {
   constructor(private readonly config: SESConfig) {
     this.ses = new SESClient({
       region: this.config.region,
-      credentials: this.config.accessKeyId ? {
+      credentials: (this.config.accessKeyId != EMPTY_FLAG || this.config.secretAccessKey != EMPTY_FLAG) ? {
         accessKeyId: this.config.accessKeyId,
         secretAccessKey: this.config.secretAccessKey,
       } : undefined,
