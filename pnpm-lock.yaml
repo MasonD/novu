@@ -22,6 +22,10 @@ overrides:
 importers:
 
   .:
+    dependencies:
+      tslib:
+        specifier: ^2.4.0
+        version: 2.5.0
     devDependencies:
       '@auto-it/npm':
         specifier: ^10.36.5
@@ -233,9 +237,6 @@ importers:
       ts-node:
         specifier: ~10.9.1
         version: 10.9.1(@types/node@16.11.7)(typescript@4.9.5)
-      tslib:
-        specifier: ^2.4.0
-        version: 2.5.0
       typescript:
         specifier: 4.9.5
         version: 4.9.5
