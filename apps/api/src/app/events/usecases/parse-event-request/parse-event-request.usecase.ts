@@ -137,6 +137,9 @@ export class ParseEventRequest {
       transactionId,
     };
 
+
+    Logger.log("doing data" + JSON.stringify(jobData), LOG_CONTEXT);
+
     await this.workflowQueueService.add({ name: transactionId, data: jobData, groupId: command.organizationId });
 
     return {

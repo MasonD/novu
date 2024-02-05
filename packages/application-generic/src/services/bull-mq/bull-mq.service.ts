@@ -177,6 +177,7 @@ export class BullMqService {
     options: JobsOptions = {},
     groupId?: string
   ) {
+    Logger.log('Adding job ' + name, LOG_CONTEXT)
     this._queue.add(name, data, {
       ...options,
       ...(BullMqService.pro && groupId
@@ -187,6 +188,7 @@ export class BullMqService {
           }
         : {}),
     });
+    Logger.log('Adding job success ' + name, LOG_CONTEXT)
   }
 
   public async addBulk(

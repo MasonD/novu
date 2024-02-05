@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import {
   EnvironmentId,
   FeatureFlagsKeysEnum,
@@ -61,13 +61,17 @@ export class MapTriggerRecipients {
       SubscriberSourceEnum.SINGLE
     );
 
-    let topicSubscribers: ISubscribersSource[] =
-      await this.getSubscribersFromAllTopics(
+    let topicSubscribers: ISubscribersSource[];
+    try {
+      topicSubscribers = await this.getSubscribersFromAllTopics(
         environmentId,
         organizationId,
         userId,
         mappedRecipients
       );
+    } catch (e) {
+      Logger.log("Failed to get subscribers from topic subscribers", "MapTriggerRecipients");
+    }
 
     if (actor) {
       topicSubscribers = this.excludeActorFromTopicSubscribers(
