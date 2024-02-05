@@ -1,9 +1,6 @@
-FROM node:16-alpine3.18 as dev_base
+FROM node:20-alpine3.18 as dev_base
 RUN apk --update --no-cache add curl
 ENV NX_DAEMON=false
-
-ARG BULL_MQ_PRO_TOKEN
-ENV BULL_MQ_PRO_NPM_TOKEN=$BULL_MQ_PRO_TOKEN
 
 ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
@@ -12,19 +9,22 @@ RUN npm i pm2 -g
 RUN npm --no-update-notifier --no-fund --global install pnpm@8.9.0
 RUN pnpm --version
 
+USER 1000
 WORKDIR /usr/src/app
 
 # ------- DEV BUILD ----------
 FROM dev_base AS dev
 ARG PACKAGE_PATH
 
-COPY ./meta .
-COPY ./deps .
-COPY ./pkg .
+COPY --chown=1000:1000 ./meta .
+COPY --chown=1000:1000 ./deps .
+COPY --chown=1000:1000 ./pkg .
 
-RUN if [ -n "${BULL_MQ_PRO_NPM_TOKEN}" ] ; then echo 'Building with Enterprise Edition of Novu'; rm -f .npmrc ; cp .npmrc-cloud .npmrc ; fi
+RUN --mount=type=secret,id=BULL_MQ_PRO_NPM_TOKEN,uid=1000 export BULL_MQ_PRO_NPM_TOKEN=$(cat /run/secrets/BULL_MQ_PRO_NPM_TOKEN) && \
+    if [ -n "${BULL_MQ_PRO_NPM_TOKEN}" ] ; then echo 'Building with Enterprise Edition of Novu'; rm -f .npmrc ; cp .npmrc-cloud .npmrc ; fi
 
 RUN --mount=type=cache,id=pnpm-store-worker,target=/pnpm/store\
+    --mount=type=secret,id=BULL_MQ_PRO_NPM_TOKEN,uid=1000 export BULL_MQ_PRO_NPM_TOKEN=$(cat /run/secrets/BULL_MQ_PRO_NPM_TOKEN) && \
  pnpm install --filter "novuhq" --filter "{${PACKAGE_PATH}}..."\
  --frozen-lockfile\
  --unsafe-perm\
@@ -50,6 +50,7 @@ WORKDIR /usr/src/app
 RUN rm -rf node_modules && pnpm recursive exec -- rm -rf ./src ./node_modules
 
 RUN --mount=type=cache,id=pnpm-store-worker,target=/pnpm/store\
+    --mount=type=secret,id=BULL_MQ_PRO_NPM_TOKEN,uid=1000 export BULL_MQ_PRO_NPM_TOKEN=$(cat /run/secrets/BULL_MQ_PRO_NPM_TOKEN) && \
  pnpm install --prod --filter "{${PACKAGE_PATH}}..." \
  --frozen-lockfile \
  --unsafe-perm \
@@ -58,16 +59,17 @@ RUN --mount=type=cache,id=pnpm-store-worker,target=/pnpm/store\
 
 # ------- PRODUCTION BUILD ----------
 FROM dev_base AS prod
+
 ARG PACKAGE_PATH
 
 ENV CI=true
 
 WORKDIR /usr/src/app
 
-COPY --link ./meta .
+COPY --link --chown=1000:1000 ./meta .
 
 # Get the build artifacts that only include dist folders
-COPY --link --from=assets /usr/src/app .
+COPY --link --chown=1000:1000 --from=assets /usr/src/app .
 
 ENV NEW_RELIC_NO_CONFIG_FILE=true
 
