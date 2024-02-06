@@ -1,4 +1,5 @@
 import * as _ from 'lodash';
+import { Logger } from '@nestjs/common';
 import {
   IBaseFieldFilterPart,
   FieldOperatorEnum,

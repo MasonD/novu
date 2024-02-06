@@ -1,4 +1,4 @@
-import { forwardRef, Inject, Injectable } from '@nestjs/common';
+import { forwardRef, Inject, Injectable, Logger } from '@nestjs/common';
 import { JobEntity, JobRepository } from '@novu/dal';
 import { AddJob, InstrumentUsecase } from '@novu/application-generic';
 
@@ -18,6 +18,7 @@ export class QueueNextJob {
     if (!job) {
       return;
     }
+    Logger.debug('NEXT JOB', job, 'NEXT_JOB');
 
     await this.addJobUsecase.execute({
       userId: job._userId,

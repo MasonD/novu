@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import * as _ from 'lodash';
 
 import {
@@ -60,9 +60,16 @@ export class TriggerMulticast {
         })
       );
 
+      Logger.verbose(
+        'RECIPIENTS: ' + JSON.stringify(mappedRecipients),
+        LOG_CONTEXT
+      );
+
       await this.validateSubscriberIdProperty(mappedRecipients);
 
       const jobs = this.mapSubscribersToJobs(mappedRecipients, command);
+
+      Logger.verbose('THESE JOBS: ' + JSON.stringify(jobs), LOG_CONTEXT);
 
       await this.subscriberProcessQueueAddBulk(jobs);
     }

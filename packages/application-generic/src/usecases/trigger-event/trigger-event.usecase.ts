@@ -57,6 +57,7 @@ export class TriggerEvent {
   @InstrumentUsecase()
   async execute(command: TriggerEventCommand) {
     try {
+      Logger.log(`Triggering event ${command.identifier}`, LOG_CONTEXT);
       const mappedCommand = {
         ...command,
         tenant: this.mapTenant(command.tenant),

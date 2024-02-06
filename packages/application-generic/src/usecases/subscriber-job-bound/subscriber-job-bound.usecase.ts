@@ -150,6 +150,11 @@ export class SubscriberJobBound {
       CreateNotificationJobsCommand.create(createNotificationJobsCommand)
     );
 
+    Logger.log(
+      'NOTIFICATION JOBS: ' + JSON.stringify(notificationJobs),
+      LOG_CONTEXT
+    );
+
     await this.storeSubscriberJobs.execute(
       StoreSubscriberJobsCommand.create({
         environmentId: command.environmentId,

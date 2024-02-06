@@ -70,7 +70,10 @@ export class MapTriggerRecipients {
         mappedRecipients
       );
     } catch (e) {
-      Logger.log("Failed to get subscribers from topic subscribers", "MapTriggerRecipients");
+      Logger.log(
+        'Failed to get subscribers from topic subscribers',
+        'MapTriggerRecipients'
+      );
     }
 
     if (actor) {
@@ -125,8 +128,17 @@ export class MapTriggerRecipients {
     });
     const isEnabled = await this.getFeatureFlag.execute(featureFlagCommand);
 
+    if (!isEnabled) {
+      Logger.log('TOPIC FEATURE DISABLED ', 'MapTriggerRecipients');
+    }
+
     if (isEnabled) {
       const topics = this.findTopics(recipients);
+
+      Logger.log(
+        'Looking for topics: ' + JSON.stringify(topics),
+        'MapTriggerRecipients'
+      );
 
       const subscribers: ISubscribersSource[] = [];
 

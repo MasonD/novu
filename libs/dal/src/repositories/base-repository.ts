@@ -38,6 +38,7 @@ export class BaseRepository<T_DBModel, T_MappedEntity, T_Enforcement> {
     return await this.MongooseModel.aggregate(query).read(options.readPreference || 'primary');
   }
 
+  // IM HERE
   async findOne(
     query: FilterQuery<T_DBModel> & T_Enforcement,
     select?: ProjectionType<T_MappedEntity>,

@@ -1,4 +1,4 @@
-import { forwardRef, Inject, Injectable } from '@nestjs/common';
+import { forwardRef, Inject, Injectable, Logger } from '@nestjs/common';
 import axios from 'axios';
 import {
   EnvironmentRepository,
@@ -79,6 +79,15 @@ export class ConditionsFilter extends Filter {
     const variables = await this.normalizeVariablesData(command);
     const filters = this.extractFilters(command);
 
+    Logger.log(
+      'COMMAND VARIABLES:' + JSON.stringify(command),
+      'CONDITIONS_FILTER'
+    );
+    Logger.log(
+      'FILTER VARIABLES:' + JSON.stringify(variables),
+      'CONDITIONS_FILTER'
+    );
+
     if (!filters || !Array.isArray(filters) || filters.length === 0) {
       return {
         passed: true,
@@ -126,6 +135,8 @@ export class ConditionsFilter extends Filter {
 
       return result;
     });
+
+    Logger.log(details, 'CONDITIONS_FILTER');
 
     const conditions = details
       .map((detail) => detail.toObject().conditions)

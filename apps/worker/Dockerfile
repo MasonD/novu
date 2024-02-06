@@ -12,23 +12,40 @@ RUN pnpm --version
 USER 1000
 WORKDIR /usr/src/app
 
-# ------- DEV BUILD ----------
-FROM dev_base AS dev
-ARG PACKAGE_PATH
 
+# ------ DEPS BUILD ----------
+FROM dev_base AS dev_deps
+ARG PACKAGE_PATH
 COPY --chown=1000:1000 ./meta .
-COPY --chown=1000:1000 ./deps .
-COPY --chown=1000:1000 ./pkg .
 
 RUN --mount=type=secret,id=BULL_MQ_PRO_NPM_TOKEN,uid=1000 export BULL_MQ_PRO_NPM_TOKEN=$(cat /run/secrets/BULL_MQ_PRO_NPM_TOKEN) && \
     if [ -n "${BULL_MQ_PRO_NPM_TOKEN}" ] ; then echo 'Building with Enterprise Edition of Novu'; rm -f .npmrc ; cp .npmrc-cloud .npmrc ; fi
 
-RUN --mount=type=cache,id=pnpm-store-worker,target=/pnpm/store\
+RUN --mount=type=cache,id=pnpm-dev,target=/pnpm/store\
     --mount=type=secret,id=BULL_MQ_PRO_NPM_TOKEN,uid=1000 export BULL_MQ_PRO_NPM_TOKEN=$(cat /run/secrets/BULL_MQ_PRO_NPM_TOKEN) && \
  pnpm install --filter "novuhq" --filter "{${PACKAGE_PATH}}..."\
  --frozen-lockfile\
- --unsafe-perm\
- --reporter=silent
+ --unsafe-perm
+
+# ------ PROD DEPS BUILD -----
+FROM dev_base AS prod_deps
+ARG PACKAGE_PATH
+COPY --chown=1000:1000 ./meta .
+
+RUN --mount=type=cache,id=pnpm-prod,target=/pnpm/store\
+    --mount=type=secret,id=BULL_MQ_PRO_NPM_TOKEN,uid=1000 export BULL_MQ_PRO_NPM_TOKEN=$(cat /run/secrets/BULL_MQ_PRO_NPM_TOKEN) && \
+ pnpm install --prod --filter "{${PACKAGE_PATH}}..." \
+ --frozen-lockfile \
+ --unsafe-perm \
+ --no-optional
+
+
+# ------- DEV BUILD ----------
+FROM dev_deps AS dev
+ARG PACKAGE_PATH
+
+COPY --chown=1000:1000 ./deps .
+COPY --chown=1000:1000 ./pkg .
 
 RUN NODE_ENV=production NX_DAEMON=false pnpm build
 
@@ -66,7 +83,7 @@ ENV CI=true
 
 WORKDIR /usr/src/app
 
-COPY --link --chown=1000:1000 ./meta .
+COPY --link --chown=1000:1000 --from=prod_deps /usr/src/app .
 
 # Get the build artifacts that only include dist folders
 COPY --link --chown=1000:1000 --from=assets /usr/src/app .

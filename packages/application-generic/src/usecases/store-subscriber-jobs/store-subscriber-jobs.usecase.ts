@@ -1,5 +1,5 @@
 import { JobRepository, JobEntity, DalException } from '@novu/dal';
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import {
   ExecutionDetailsSourceEnum,
   ExecutionDetailsStatusEnum,
@@ -33,7 +33,9 @@ export class StoreSubscriberJobs {
   async execute(command: StoreSubscriberJobsCommand) {
     let storedJobs;
     try {
+      Logger.log('STORING JOBS:' + JSON.stringify(command.jobs), LOG_CONTEXT);
       storedJobs = await this.jobRepository.storeJobs(command.jobs);
+      Logger.log('STORED JOBS:' + JSON.stringify(storedJobs), LOG_CONTEXT);
     } catch (e) {
       if (e instanceof DalException) {
         throw new PlatformException(e.message);
@@ -51,6 +53,8 @@ export class StoreSubscriberJobs {
       jobId: firstJob._id,
       job: firstJob,
     };
+
+    Logger.debug('FIRST JOB', firstJob, LOG_CONTEXT);
 
     await this.addJob.execute(addJobCommand);
   }
