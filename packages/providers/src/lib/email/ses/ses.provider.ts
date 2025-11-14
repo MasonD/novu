@@ -16,6 +16,8 @@ import { BaseProvider, CasingEnum } from '../../../base.provider';
 import { WithPassthrough } from '../../../utils/types';
 import { SESConfig } from './ses.config';
 
+const EMPTY_FLAG = 'none';
+
 export class SESEmailProvider extends BaseProvider implements IEmailProvider {
   id = EmailProviderIdEnum.SES;
   protected casing: CasingEnum = CasingEnum.CAMEL_CASE;
@@ -26,10 +28,13 @@ export class SESEmailProvider extends BaseProvider implements IEmailProvider {
     super();
     this.ses = new SESClient({
       region: this.config.region,
-      credentials: {
-        accessKeyId: this.config.accessKeyId,
-        secretAccessKey: this.config.secretAccessKey,
-      },
+      credentials:
+        this.config.accessKeyId != EMPTY_FLAG || this.config.secretAccessKey != EMPTY_FLAG
+          ? {
+              accessKeyId: this.config.accessKeyId,
+              secretAccessKey: this.config.secretAccessKey,
+            }
+          : undefined,
     });
   }
 
